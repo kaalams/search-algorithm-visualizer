@@ -32,7 +32,7 @@ export default function GraphWidget() {
   const [nodeIndexMapping, setNodeIndexMapping] = useState({});
   const [graph, setGraph] = useState(defaultDirectedGraph);
 
-  // Change these to state variables if they needed
+  // Change these to state variables if needed
   const options = defaultOptions;
   const events = defaultEvents;
 
@@ -238,7 +238,7 @@ export default function GraphWidget() {
           options={options}
           getNetwork={(network) => setNetwork({ network })}
           events={events}
-        ></Graph>
+        />
       </div>
       <div className="grid-item">
         <Form
@@ -274,7 +274,6 @@ export default function GraphWidget() {
           <Form.Item label="Add edge" name="addEdge">
             <div className="grid-container-small">
               <div className="grid-item-small">
-                {" "}
                 <Dropdown menu={nodeFromMenuProps}>
                   <Button>
                     <Space>
@@ -372,7 +371,6 @@ export default function GraphWidget() {
               </div>
             </div>
           </Form.Item>
-
           <Form.Item
             wrapperCol={{
               offset: 8,
