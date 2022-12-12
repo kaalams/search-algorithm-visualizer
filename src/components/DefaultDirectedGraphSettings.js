@@ -1,6 +1,7 @@
 import uuid from "react-uuid";
 
 const initialUuids = [uuid(), uuid(), uuid(), uuid(), uuid()];
+
 export const defaultDirectedGraph = {
   nodes: [
     {
@@ -54,7 +55,8 @@ export const defaultOptions = {
 
 export const defaultEvents = {
   select: function (event) {
-    var { nodes, edges } = event;
+    const { nodes, edges } = event;
     console.log(nodes);
+    console.log(edges);
   },
 };

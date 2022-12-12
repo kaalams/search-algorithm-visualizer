@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Switch } from "antd";
+import { Button, Form, Switch } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -21,8 +21,7 @@ export default function GraphVisualizer() {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-  console.log(isDirected);
-  console.log(isWeighted);
+
   return (
     <div
       style={{
@@ -43,7 +42,6 @@ export default function GraphVisualizer() {
         autoComplete="off"
       >
         <div style={{ textAlign: "center", paddingBottom: 20 }}>
-          {" "}
           <h1>Fill in the form below</h1>
         </div>
 
