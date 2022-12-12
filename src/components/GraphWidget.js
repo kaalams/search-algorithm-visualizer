@@ -1,11 +1,15 @@
 import { Button, Form, Input, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import uuid from 'react-uuid';
+import uuid from "react-uuid";
 import { useLocation } from "react-router-dom";
 import Graph from "react-graph-vis";
 import "./css/GraphWidget.css";
-import {defaultDirectedGraph, defaultOptions, defaultEvents} from "./DefaultDirectedGraphSettings"
+import {
+  defaultDirectedGraph,
+  defaultOptions,
+  defaultEvents,
+} from "./DefaultDirectedGraphSettings";
 
 export default function GraphWidget(props) {
   const onFinish = (values) => {
@@ -15,6 +19,7 @@ export default function GraphWidget(props) {
     console.log("Failed:", errorInfo);
   };
 
+  const [network, setNetwork] = useState({});
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
   const [toNode, setToNode] = useState("");
@@ -34,9 +39,12 @@ export default function GraphWidget(props) {
 
   useEffect(() => {
     const nodeMap = {};
-    if (editedGraph.nodes.length > 0) {
+    if (editedGraph?.nodes.length > 0) {
       for (let i = 0; i < editedGraph.nodes.length; i++) {
-        nodeMap[editedGraph.nodes[i].id] = {index: i, label: editedGraph.nodes[i].label};
+        nodeMap[editedGraph.nodes[i].id] = {
+          index: i,
+          label: editedGraph.nodes[i].label,
+        };
       }
     }
     setNodeIndexMapping(nodeMap);
@@ -51,7 +59,6 @@ export default function GraphWidget(props) {
   const onChangeAddedNode = (value) => {
     setNodeToAdd(value);
   };
-
 
   const addNode = () => {
     if (nodeToAdd.length > 0 && graph.nodes.length > 0) {
@@ -69,7 +76,7 @@ export default function GraphWidget(props) {
 
   const addEdge = () => {
     if (fromNode.length > 0 && toNode.length > 0) {
-      const newEdge = {from: fromNode, to: toNode};
+      const newEdge = { from: fromNode, to: toNode };
       const newGraphObject = { ...graph };
       const newEdges = [...newGraphObject.edges, newEdge];
       newGraphObject.edges = newEdges;
@@ -83,9 +90,12 @@ export default function GraphWidget(props) {
     if (nodeToDeleteFrom.length > 0 && nodeToDeleteTo.length > 0) {
       const newGraphObject = { ...graph };
       const currentEdges = [...newGraphObject.edges];
-      const newEdges = []
-      for(let i = 0; i < currentEdges.length; i++) {
-        if (currentEdges[i].from !== nodeToDeleteFrom && currentEdges[i].to !== nodeToDeleteTo) {
+      const newEdges = [];
+      for (let i = 0; i < currentEdges.length; i++) {
+        if (
+          currentEdges[i].from !== nodeToDeleteFrom &&
+          currentEdges[i].to !== nodeToDeleteTo
+        ) {
           newEdges.push(currentEdges[i]);
         }
       }
@@ -99,44 +109,43 @@ export default function GraphWidget(props) {
   //weird bug when i just try to splice the list, i dunno why
   const deleteNode = () => {
     if (nodeToDelete.length > 0 && graph.nodes.length > 0) {
-      const newGraphObject = {...graph}
+      const newGraphObject = { ...graph };
       const currentNodes = newGraphObject.nodes;
       const currentEdges = newGraphObject.edges;
-      const newEdges = []
-      const newNodes = []
-      for(let i = 0; i < currentEdges.length; i++) {
+      const newEdges = [];
+      const newNodes = [];
+      for (let i = 0; i < currentEdges.length; i++) {
         if (currentEdges[i].from !== nodeToDelete) {
-          newEdges.push(currentEdges[i])
+          newEdges.push(currentEdges[i]);
         }
       }
-      for(let i = 0; i < currentNodes.length; i++) {
+      for (let i = 0; i < currentNodes.length; i++) {
         if (currentNodes[i].id !== nodeToDelete) {
-          newNodes.push(currentNodes[i])
+          newNodes.push(currentNodes[i]);
         }
       }
       newGraphObject.nodes = newNodes;
       newGraphObject.edges = newEdges;
-      setEditedGraph(newGraphObject)
-      setNodeToDelete("")
+      setEditedGraph(newGraphObject);
+      setNodeToDelete("");
     }
   };
 
   const handleMenuFromClick = (e) => {
-    setFromNode(e.key)
-  }
+    setFromNode(e.key);
+  };
   const handleMenuToClick = (e) => {
-    setToNode(e.key)
-  }
+    setToNode(e.key);
+  };
   const handleDeleteNodeClick = (e) => {
-    setNodeToDelete(e.key)
-  }
+    setNodeToDelete(e.key);
+  };
   const handleDeleteNodeFromClick = (e) => {
-    setNodeToDeleteFrom(e.key)
-  }
+    setNodeToDeleteFrom(e.key);
+  };
   const handleDeleteNodeToClick = (e) => {
-    setNodeToDeleteTo(e.key)
-  }
-
+    setNodeToDeleteTo(e.key);
+  };
 
   const nodeFromMenuProps = {
     items: nodes,
@@ -151,22 +160,33 @@ export default function GraphWidget(props) {
   const deleteNodeProps = {
     items: nodes,
     onClick: handleDeleteNodeClick,
-  }
+  };
 
   const deleteNodeFromProps = {
     items: nodes,
     onClick: handleDeleteNodeFromClick,
-  }
+  };
 
   const deleteNodeToProps = {
     items: nodes,
     onClick: handleDeleteNodeToClick,
-  }
+  };
+
+  const changeNodeColor = (nodeId, color) => {
+    if (Object.keys(network.network).length > 0) {
+      network.network.body.nodes[nodeId].options.color.background = color;
+    }
+  };
 
   return (
     <div className="grid-container" style={{ paddingTop: 200 }}>
       <div className="grid-item">
-        <Graph graph={graph} options={options} events={events}></Graph>
+        <Graph
+          graph={graph}
+          options={options}
+          getNetwork={(network) => setNetwork({ network })}
+          events={events}
+        ></Graph>
       </div>
       <div className="grid-item">
         <Form
@@ -205,17 +225,19 @@ export default function GraphWidget(props) {
                 <Dropdown menu={nodeFromMenuProps}>
                   <Button>
                     <Space>
-                      {fromNode != "" ? nodeIndexMapping[fromNode].label : "From"} 
+                      {fromNode != ""
+                        ? nodeIndexMapping[fromNode].label
+                        : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
                 </Dropdown>
               </div>
               <div className="grid-item-small">
-              <Dropdown menu={nodeToMenuProps}>
+                <Dropdown menu={nodeToMenuProps}>
                   <Button>
                     <Space>
-                    {toNode != "" ? nodeIndexMapping[toNode].label : "To"} 
+                      {toNode != "" ? nodeIndexMapping[toNode].label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -231,10 +253,12 @@ export default function GraphWidget(props) {
             <div className="grid-container-small">
               <div className="grid-item-small">
                 {" "}
-               <Dropdown menu={deleteNodeProps}>
+                <Dropdown menu={deleteNodeProps}>
                   <Button>
                     <Space>
-                      {nodeToDelete != "" ? nodeIndexMapping[nodeToDelete]?.label : "Nodes"} 
+                      {nodeToDelete != ""
+                        ? nodeIndexMapping[nodeToDelete]?.label
+                        : "Nodes"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -253,7 +277,9 @@ export default function GraphWidget(props) {
                 <Dropdown menu={deleteNodeFromProps}>
                   <Button>
                     <Space>
-                      {nodeToDeleteFrom != "" ? nodeIndexMapping[nodeToDeleteFrom]?.label : "From"} 
+                      {nodeToDeleteFrom != ""
+                        ? nodeIndexMapping[nodeToDeleteFrom]?.label
+                        : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -262,12 +288,14 @@ export default function GraphWidget(props) {
               <div className="grid-item-small">
                 {" "}
                 <Dropdown menu={deleteNodeToProps}>
-                    <Button>
-                      <Space>
-                        {nodeToDeleteTo != "" ? nodeIndexMapping[nodeToDeleteTo]?.label : "To"} 
-                        <DownOutlined />
-                      </Space>
-                    </Button>
+                  <Button>
+                    <Space>
+                      {nodeToDeleteTo != ""
+                        ? nodeIndexMapping[nodeToDeleteTo]?.label
+                        : "To"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
                 </Dropdown>
               </div>
               <div className="grid-item-small">
@@ -275,8 +303,6 @@ export default function GraphWidget(props) {
               </div>
             </div>
           </Form.Item>
-
-  
 
           <Form.Item
             wrapperCol={{
@@ -289,5 +315,3 @@ export default function GraphWidget(props) {
     </div>
   );
 }
-
-

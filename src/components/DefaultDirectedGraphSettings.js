@@ -1,13 +1,38 @@
-import uuid from 'react-uuid';
+import uuid from "react-uuid";
 
-const initialUuids = [uuid(), uuid(), uuid(), uuid(), uuid()]
+const initialUuids = [uuid(), uuid(), uuid(), uuid(), uuid()];
 export const defaultDirectedGraph = {
   nodes: [
-    { id: initialUuids[0], label: "Node 1", title: "node 1 tootip text" },
-    { id: initialUuids[1], label: "Node 2", title: "node 2 tootip text" },
-    { id: initialUuids[2], label: "Node 3", title: "node 3 tootip text" },
-    { id: initialUuids[3], label: "Node 4", title: "node 4 tootip text" },
-    { id: initialUuids[4], label: "Node 5", title: "node 5 tootip text" },
+    {
+      id: initialUuids[0],
+      label: "Node 1",
+      title: "node 1 tootip text",
+      color: "#97c2fc",
+    },
+    {
+      id: initialUuids[1],
+      label: "Node 2",
+      title: "node 2 tootip text",
+      color: "#97c2fc",
+    },
+    {
+      id: initialUuids[2],
+      label: "Node 3",
+      title: "node 3 tootip text",
+      color: "#97c2fc",
+    },
+    {
+      id: initialUuids[3],
+      label: "Node 4",
+      title: "node 4 tootip text",
+      color: "#97c2fc",
+    },
+    {
+      id: initialUuids[4],
+      label: "Node 5",
+      title: "node 5 tootip text",
+      color: "#97c2fc",
+    },
   ],
   edges: [
     { from: initialUuids[0], to: initialUuids[2] },
@@ -33,4 +58,3 @@ export const defaultEvents = {
     console.log(nodes);
   },
 };
-
