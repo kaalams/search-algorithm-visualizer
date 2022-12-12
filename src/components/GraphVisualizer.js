@@ -1,43 +1,39 @@
-import { Button, Checkbox, Form, Input, Switch} from "antd";
+import { Button, Checkbox, Form, Input, Switch } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function GraphVisualizer() {
-    const [isDirected, setIsDirected] = useState(false);
-    const [isWeighted, setIsWeighted] = useState(false);
+  const [isDirected, setIsDirected] = useState(false);
+  const [isWeighted, setIsWeighted] = useState(false);
 
-    const onChangeDirected = (checked) => {
-        setIsDirected(checked)
-    }
+  const onChangeDirected = (checked) => {
+    setIsDirected(checked);
+  };
 
-    const onChangeWeighted = (checked) => {
-        setIsWeighted(checked)
-    }
-    
-    const onFinish = (values) => {
-        console.log('Success:', values);
-      };
+  const onChangeWeighted = (checked) => {
+    setIsWeighted(checked);
+  };
 
-    
-      const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-      };
-      console.log(isDirected);
-      console.log(isWeighted);
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
+  console.log(isDirected);
+  console.log(isWeighted);
   return (
- 
     <div
       style={{
         paddingTop: 200,
         minHeight: 1250,
         margin: "auto",
-      
+
         backgroundColor: "transparent",
         maxWidth: 700,
       }}
     >
-       
-    
       <Form
         name="basic"
         labelCol={{ span: 8 }}
@@ -46,14 +42,17 @@ export default function GraphVisualizer() {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        <div style={{textAlign: "center", paddingBottom: 20}}> <h1>Fill in the form below</h1></div>
-       
+        <div style={{ textAlign: "center", paddingBottom: 20 }}>
+          {" "}
+          <h1>Fill in the form below</h1>
+        </div>
+
         <Form.Item
           label="Is your graph directed?"
           name="isDirected"
           rules={[{ required: true, message: "Please answer!" }]}
         >
-          <Switch onChange={onChangeDirected}/>
+          <Switch onChange={onChangeDirected} />
         </Form.Item>
 
         <Form.Item
@@ -61,15 +60,16 @@ export default function GraphVisualizer() {
           name="isWeighted"
           rules={[{ required: true, message: "Please answer!" }]}
         >
-          <Switch onChange={onChangeWeighted}/>
+          <Switch onChange={onChangeWeighted} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-        <Link to = "/graph" state= {{isGraphWeighted: isWeighted, isGraphDirected: isDirected}}><Button type="primary" htmlType="submit">
-            Submit
-          </Button></Link>
+          <Link to="/graph" state={{ isGraphWeighted: isWeighted, isGraphDirected: isDirected }}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Link>
         </Form.Item>
       </Form>
     </div>
-    
   );
 }

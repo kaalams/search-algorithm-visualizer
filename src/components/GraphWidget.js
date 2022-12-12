@@ -1,15 +1,16 @@
-import { Button, Form, Input, Dropdown, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import { Button, Dropdown, Form, Input, Space } from "antd";
 import { useEffect, useState } from "react";
-import uuid from "react-uuid";
-import { useLocation } from "react-router-dom";
 import Graph from "react-graph-vis";
-import "./css/GraphWidget.css";
+import { useLocation } from "react-router-dom";
+import uuid from "react-uuid";
+
 import {
   defaultDirectedGraph,
-  defaultOptions,
   defaultEvents,
+  defaultOptions,
 } from "./DefaultDirectedGraphSettings";
+import "./css/GraphWidget.css";
 
 export default function GraphWidget(props) {
   const onFinish = (values) => {
@@ -94,10 +95,7 @@ export default function GraphWidget(props) {
       const currentEdges = [...newGraphObject.edges];
       const newEdges = [];
       for (let i = 0; i < currentEdges.length; i++) {
-        if (
-          currentEdges[i].from !== nodeToDeleteFrom &&
-          currentEdges[i].to !== nodeToDeleteTo
-        ) {
+        if (currentEdges[i].from !== nodeToDeleteFrom && currentEdges[i].to !== nodeToDeleteTo) {
           newEdges.push(currentEdges[i]);
         }
       }
@@ -141,26 +139,29 @@ export default function GraphWidget(props) {
 
     while (qq.length !== 0) {
       const node_id = qq.shift();
-      explored.add(node_id)
+      explored.add(node_id);
 
       //break if found
       if (node_id === endNode) {
         break;
       }
       //else search neighbors
-      const neighbors = graph.edges.flatMap(edge =>
-        ((edge.from === node_id) && !explored.has(edge.to)) ? [edge.to] : [])
-      qq = [...qq, ...neighbors]
+      const neighbors = graph.edges.flatMap((edge) =>
+        edge.from === node_id && !explored.has(edge.to) ? [edge.to] : [],
+      );
+      qq = [...qq, ...neighbors];
     }
 
-    const newNodes = graph.nodes.map(nd =>
-      (explored.has(nd.id)) ? {
-        id: nd.id,
-        label: nd.label,
-        title: nd.title,
-        color: "orange"
-      } : nd
-    )
+    const newNodes = graph.nodes.map((nd) =>
+      explored.has(nd.id)
+        ? {
+            id: nd.id,
+            label: nd.label,
+            title: nd.title,
+            color: "orange",
+          }
+        : nd,
+    );
     newGraphObject.nodes = newNodes;
     setEditedGraph(newGraphObject);
   };
@@ -276,9 +277,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={nodeFromMenuProps}>
                   <Button>
                     <Space>
-                      {fromNode != ""
-                        ? nodeIndexMapping[fromNode].label
-                        : "From"}
+                      {fromNode != "" ? nodeIndexMapping[fromNode].label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -307,9 +306,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={deleteNodeProps}>
                   <Button>
                     <Space>
-                      {nodeToDelete != ""
-                        ? nodeIndexMapping[nodeToDelete]?.label
-                        : "Nodes"}
+                      {nodeToDelete != "" ? nodeIndexMapping[nodeToDelete]?.label : "Nodes"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -328,9 +325,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={deleteNodeFromProps}>
                   <Button>
                     <Space>
-                      {nodeToDeleteFrom != ""
-                        ? nodeIndexMapping[nodeToDeleteFrom]?.label
-                        : "From"}
+                      {nodeToDeleteFrom != "" ? nodeIndexMapping[nodeToDeleteFrom]?.label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -341,9 +336,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={deleteNodeToProps}>
                   <Button>
                     <Space>
-                      {nodeToDeleteTo != ""
-                        ? nodeIndexMapping[nodeToDeleteTo]?.label
-                        : "To"}
+                      {nodeToDeleteTo != "" ? nodeIndexMapping[nodeToDeleteTo]?.label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -361,9 +354,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={dfsFromProps}>
                   <Button>
                     <Space>
-                      {startNode != ""
-                        ? nodeIndexMapping[startNode]?.label
-                        : "From"}
+                      {startNode != "" ? nodeIndexMapping[startNode]?.label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -374,9 +365,7 @@ export default function GraphWidget(props) {
                 <Dropdown menu={dfsToProps}>
                   <Button>
                     <Space>
-                      {endNode != ""
-                        ? nodeIndexMapping[endNode]?.label
-                        : "To"}
+                      {endNode != "" ? nodeIndexMapping[endNode]?.label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
