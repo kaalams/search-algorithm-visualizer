@@ -210,6 +210,7 @@ export default function GraphWidget(props) {
                 <Input
                   value={nodeToAdd}
                   onChange={(e) => onChangeAddedNode(e.target.value)}
+                  onPressEnter={addNode}
                 />
               </div>
               <div className="grid-item-small">

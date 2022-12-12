@@ -44,7 +44,7 @@ export const defaultDirectedGraph = {
 
 export const defaultOptions = {
   layout: {
-    hierarchical: true,
+    hierarchical: false,
   },
   edges: {
     color: "#000000",
