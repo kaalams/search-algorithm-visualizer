@@ -26,6 +26,8 @@ export default function GraphWidget(props) {
   const [nodeToDelete, setNodeToDelete] = useState("");
   const [nodeToDeleteFrom, setNodeToDeleteFrom] = useState("");
   const [nodeToDeleteTo, setNodeToDeleteTo] = useState("");
+  const [startNode, setNodeToStartFrom] = useState("");
+  const [endNode, setNodeToEndTo] = useState("");
   const [editedGraph, setEditedGraph] = useState(defaultDirectedGraph);
   const [nodeIndexMapping, setNodeIndexMapping] = useState({});
   const [graph, setGraph] = useState(defaultDirectedGraph);
@@ -131,6 +133,38 @@ export default function GraphWidget(props) {
     }
   };
 
+  const dfs = () => {
+    const newGraphObject = { ...graph };
+    const explored = new Set();
+    var qq = [];
+    qq.push(startNode);
+
+    while (qq.length !== 0) {
+      const node_id = qq.shift();
+      explored.add(node_id)
+
+      //break if found
+      if (node_id === endNode) {
+        break;
+      }
+      //else search neighbors
+      const neighbors = graph.edges.flatMap(edge =>
+        ((edge.from === node_id) && !explored.has(edge.to)) ? [edge.to] : [])
+      qq = [...qq, ...neighbors]
+    }
+
+    const newNodes = graph.nodes.map(nd =>
+      (explored.has(nd.id)) ? {
+        id: nd.id,
+        label: nd.label,
+        title: nd.title,
+        color: "orange"
+      } : nd
+    )
+    newGraphObject.nodes = newNodes;
+    setEditedGraph(newGraphObject);
+  };
+
   const handleMenuFromClick = (e) => {
     setFromNode(e.key);
   };
@@ -145,6 +179,12 @@ export default function GraphWidget(props) {
   };
   const handleDeleteNodeToClick = (e) => {
     setNodeToDeleteTo(e.key);
+  };
+  const handleDFSFromClick = (e) => {
+    setNodeToStartFrom(e.key);
+  };
+  const handleDFSToClick = (e) => {
+    setNodeToEndTo(e.key);
   };
 
   const nodeFromMenuProps = {
@@ -170,6 +210,16 @@ export default function GraphWidget(props) {
   const deleteNodeToProps = {
     items: nodes,
     onClick: handleDeleteNodeToClick,
+  };
+
+  const dfsFromProps = {
+    items: nodes,
+    onClick: handleDFSFromClick,
+  };
+
+  const dfsToProps = {
+    items: nodes,
+    onClick: handleDFSToClick,
   };
 
   const changeNodeColor = (nodeId, color) => {
@@ -301,6 +351,39 @@ export default function GraphWidget(props) {
               </div>
               <div className="grid-item-small">
                 <Button onClick={deleteEdge}>Ok!</Button>
+              </div>
+            </div>
+          </Form.Item>
+          <Form.Item label="DFS" name="dfs">
+            <div className="grid-container-small">
+              <div className="grid-item-small">
+                {" "}
+                <Dropdown menu={dfsFromProps}>
+                  <Button>
+                    <Space>
+                      {startNode != ""
+                        ? nodeIndexMapping[startNode]?.label
+                        : "From"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+                {" "}
+                <Dropdown menu={dfsToProps}>
+                  <Button>
+                    <Space>
+                      {endNode != ""
+                        ? nodeIndexMapping[endNode]?.label
+                        : "To"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+                <Button onClick={dfs}>Ok!</Button>
               </div>
             </div>
           </Form.Item>
