@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import GraphVisualizer from "./components/GraphVisualizer";
 import GraphWidget from "./components/GraphWidget";
 import LandingPage from "./components/LandingPage";
+import 'antd/dist/antd.css';
 
 export default function App() {
   return (
