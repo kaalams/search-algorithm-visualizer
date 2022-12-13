@@ -142,7 +142,7 @@ export default function GraphWidget() {
         dfs(startNode, endNode, graph, setEditedGraph);
         break;
       case "bfs":
-        bfs();
+        bfs(startNode, endNode, graph, setEditedGraph);
         break;
       case "ucs":
         ucs(startNode, endNode, graph, setEditedGraph);
