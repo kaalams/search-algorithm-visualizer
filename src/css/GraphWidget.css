@@ -1,11 +1,10 @@
 .grid-container {
   display: grid;
   grid-template-columns: auto auto auto;
-  padding: 10px;
   justify-content: center;
-  max-width: fit-content;
   margin: auto;
 }
+
 .grid-item {
   background-color: #f7f5f5;
   border: 1px solid rgba(0, 0, 0, 0.8);

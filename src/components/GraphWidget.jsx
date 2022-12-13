@@ -1,5 +1,5 @@
 import { DownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Form, Input, Space } from "antd";
+import { Button, Dropdown, Form, Input, Radio, Space } from "antd";
 import { useEffect, useState } from "react";
 import Graph from "react-graph-vis";
 import uuid from "react-uuid";
@@ -19,6 +19,7 @@ export default function GraphWidget() {
     console.log("Failed:", errorInfo);
   };
 
+  const [algorithm, setAlgorithm] = useState("dfs");
   const [network, setNetwork] = useState({});
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
@@ -115,18 +116,22 @@ export default function GraphWidget() {
       const currentEdges = newGraphObject.edges;
       const newEdges = [];
       const newNodes = [];
+
       for (let i = 0; i < currentEdges.length; i++) {
         if (currentEdges[i].from !== nodeToDelete) {
           newEdges.push(currentEdges[i]);
         }
       }
+
       for (let i = 0; i < currentNodes.length; i++) {
         if (currentNodes[i].id !== nodeToDelete) {
           newNodes.push(currentNodes[i]);
         }
       }
+
       newGraphObject.nodes = newNodes;
       newGraphObject.edges = newEdges;
+
       setEditedGraph(newGraphObject);
       setNodeToDelete("");
     }
@@ -135,21 +140,23 @@ export default function GraphWidget() {
   const dfs = () => {
     const newGraphObject = { ...graph };
     const explored = new Set();
-    var qq = [];
+    let qq = [];
     qq.push(startNode);
 
     while (qq.length !== 0) {
       const node_id = qq.shift();
       explored.add(node_id);
 
-      //break if found
+      // Break if found
       if (node_id === endNode) {
         break;
       }
-      //else search neighbors
+
+      // Else, search neighbors
       const neighbors = graph.edges.flatMap((edge) =>
         edge.from === node_id && !explored.has(edge.to) ? [edge.to] : [],
       );
+
       qq = [...qq, ...neighbors];
     }
 
@@ -167,6 +174,29 @@ export default function GraphWidget() {
     setEditedGraph(newGraphObject);
   };
 
+  // TODO: implement (breadth first search)
+  const bfs = () => {};
+
+  // TODO: implement (uniform-cost search)
+  const ucs = () => {};
+
+  const runSearch = () => {
+    switch (algorithm) {
+      case "dfs":
+        dfs();
+        break;
+      case "bfs":
+        bfs();
+        break;
+      case "ucs":
+        ucs();
+        break;
+      default:
+        console.error("Invalid algorithm ");
+        break;
+    }
+  };
+
   const handleMenuFromClick = (e) => {
     setFromNode(e.key);
   };
@@ -182,10 +212,10 @@ export default function GraphWidget() {
   const handleDeleteNodeToClick = (e) => {
     setNodeToDeleteTo(e.key);
   };
-  const handleDFSFromClick = (e) => {
+  const handleFromClick = (e) => {
     setNodeToStartFrom(e.key);
   };
-  const handleDFSToClick = (e) => {
+  const handleToClick = (e) => {
     setNodeToEndTo(e.key);
   };
 
@@ -214,14 +244,14 @@ export default function GraphWidget() {
     onClick: handleDeleteNodeToClick,
   };
 
-  const dfsFromProps = {
+  const searchFromProps = {
     items: nodes,
-    onClick: handleDFSFromClick,
+    onClick: handleFromClick,
   };
 
-  const dfsToProps = {
+  const searchToProps = {
     items: nodes,
-    onClick: handleDFSToClick,
+    onClick: handleToClick,
   };
 
   const changeNodeColor = (nodeId, color) => {
@@ -235,7 +265,7 @@ export default function GraphWidget() {
       <div className="grid-item">
         <Graph
           graph={graph}
-          options={options}
+          options={{ ...options, height: "100%", width: "1000px" }}
           getNetwork={(network) => setNetwork({ network })}
           events={events}
         />
@@ -251,10 +281,42 @@ export default function GraphWidget() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-        <Form.Item label="Algorithm" name="algorithm">
-        </Form.Item>
-        <Form.Item label="From/To" name="from/to">
-        </Form.Item>
+          <Form.Item label="Algorithm" name="algorithm">
+            <Radio.Group onChange={setAlgorithm} value={algorithm}>
+              <Radio.Button value="dfs">DFS</Radio.Button>
+              <Radio.Button value="bfs">BFS</Radio.Button>
+              <Radio.Button value="ucs">UCS</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item label="From/To" name="from/to">
+            <div className="grid-container-small">
+              <div className="grid-item-small">
+                <Dropdown menu={searchFromProps}>
+                  <Button>
+                    <Space>
+                      {startNode !== "" ? nodeIndexMapping[startNode]?.label : "From"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+                <Dropdown menu={searchToProps}>
+                  <Button>
+                    <Space>
+                      {endNode !== "" ? nodeIndexMapping[endNode]?.label : "To"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+                <Button onClick={runSearch}>Search!</Button>
+              </div>
+            </div>
+          </Form.Item>
+
           <Form.Item label="Add node" name="nodeName">
             <div className="grid-container-small">
               <div className="grid-item-small">
@@ -343,39 +405,6 @@ export default function GraphWidget() {
               </div>
             </div>
           </Form.Item>
-          <Form.Item label="DFS" name="dfs">
-            <div className="grid-container-small">
-              <div className="grid-item-small">
-                <Dropdown menu={dfsFromProps}>
-                  <Button>
-                    <Space>
-                      {startNode !== "" ? nodeIndexMapping[startNode]?.label : "From"}
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              </div>
-              <div className="grid-item-small">
-                <Dropdown menu={dfsToProps}>
-                  <Button>
-                    <Space>
-                      {endNode !== "" ? nodeIndexMapping[endNode]?.label : "To"}
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              </div>
-              <div className="grid-item-small">
-                <Button onClick={dfs}>Ok!</Button>
-              </div>
-            </div>
-          </Form.Item>
-          <Form.Item
-            wrapperCol={{
-              offset: 8,
-              span: 16,
-            }}
-          ></Form.Item>
         </Form>
       </div>
     </div>
