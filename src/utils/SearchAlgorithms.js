@@ -1,6 +1,6 @@
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export const dfs = async (startNode, endNode, graph, setEditedGraph) => {
+export const bfs = async (startNode, endNode, graph, setEditedGraph) => {
   const explored = new Set();
   let qq = [startNode];
 
@@ -39,8 +39,8 @@ export const dfs = async (startNode, endNode, graph, setEditedGraph) => {
 };
 
 
-// TODO: implement (breadth first search)
-export const bfs = async (startNode, endNode, graph, setEditedGraph) => {
+// TODO: implement (depth first search)
+export const dfs = async (startNode, endNode, graph, setEditedGraph) => {
   const explored = new Set();
   let frontier_queue = [startNode];
 
