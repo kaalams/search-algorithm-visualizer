@@ -10,6 +10,7 @@ import {
   defaultOptions,
 } from "../constants/DefaultDirectedGraphSettings";
 import "../css/GraphWidget.css";
+import { bfs, dfs, ucs } from "../utils/SearchAlgorithms";
 
 export default function GraphWidget() {
   const onFinish = (values) => {
@@ -135,55 +136,10 @@ export default function GraphWidget() {
     }
   };
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-  const dfs = async () => {
-    const explored = new Set();
-    let qq = [startNode];
-
-    while (qq.length !== 0) {
-      const newGraphObject = { ...graph };
-      const node_id = qq.shift();
-      explored.add(node_id);
-
-      const newNodes = graph.nodes.map((nd) =>
-        explored.has(nd.id)
-          ? {
-              ...nd,
-              color: "orange",
-            }
-          : nd,
-      );
-
-      newGraphObject.nodes = newNodes;
-      setEditedGraph(newGraphObject);
-
-      // Break if found
-      if (node_id === endNode) {
-        break;
-      }
-
-      // Else, search neighbors
-      const neighbors = graph.edges.flatMap((edge) =>
-        edge.from === node_id && !explored.has(edge.to) ? [edge.to] : [],
-      );
-
-      qq = [...qq, ...neighbors];
-
-      await sleep(500);
-    }
-  };
-
-  // TODO: implement (breadth first search)
-  const bfs = () => {};
-
-  // TODO: implement (uniform-cost search)
-  const ucs = () => {};
-
   const runSearch = () => {
     switch (algorithm) {
       case "dfs":
-        dfs();
+        dfs(startNode, endNode, graph, setEditedGraph);
         break;
       case "bfs":
         bfs();
@@ -324,6 +280,7 @@ export default function GraphWidget() {
                   value={nodeToAdd}
                   onChange={(e) => onChangeAddedNode(e.target.value)}
                   onPressEnter={addNode}
+                  placeholder="Node label"
                 />
               </div>
               <div className="grid-item-small">
@@ -366,7 +323,7 @@ export default function GraphWidget() {
                 <Dropdown menu={deleteNodeProps}>
                   <Button>
                     <Space>
-                      {nodeToDelete !== "" ? nodeIndexMapping[nodeToDelete]?.label : "Nodes"}
+                      {nodeToDelete !== "" ? nodeIndexMapping[nodeToDelete]?.label : "Node"}
                       <DownOutlined />
                     </Space>
                   </Button>
