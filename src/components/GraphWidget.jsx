@@ -145,7 +145,7 @@ export default function GraphWidget() {
         bfs();
         break;
       case "ucs":
-        ucs();
+        ucs(startNode, endNode, graph, setEditedGraph);
         break;
       default:
         console.error("Invalid algorithm.");
