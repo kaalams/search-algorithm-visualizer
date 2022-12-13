@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import { Link } from "react-router-dom";
 
-import "./css/LandingPage.css";
+import "../css/LandingPage.css";
 
 export default function LandingPage() {
   return (

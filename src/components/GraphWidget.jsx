@@ -8,8 +8,8 @@ import {
   defaultDirectedGraph,
   defaultEvents,
   defaultOptions,
-} from "./DefaultDirectedGraphSettings";
-import "./css/GraphWidget.css";
+} from "../constants/DefaultDirectedGraphSettings";
+import "../css/GraphWidget.css";
 
 export default function GraphWidget() {
   const onFinish = (values) => {
@@ -231,7 +231,7 @@ export default function GraphWidget() {
   };
 
   return (
-    <div className="grid-container" style={{ paddingTop: 200 }}>
+    <div className="grid-container" style={{ paddingTop: 100 }}>
       <div className="grid-item">
         <Graph
           graph={graph}
@@ -242,13 +242,8 @@ export default function GraphWidget() {
       </div>
       <div className="grid-item">
         <Form
+          layout="vertical"
           name="basic"
-          labelCol={{
-            span: 8,
-          }}
-          wrapperCol={{
-            span: 16,
-          }}
           initialValues={{
             remember: true,
           }}
@@ -256,6 +251,10 @@ export default function GraphWidget() {
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
+        <Form.Item label="Algorithm" name="algorithm">
+        </Form.Item>
+        <Form.Item label="From/To" name="from/to">
+        </Form.Item>
           <Form.Item label="Add node" name="nodeName">
             <div className="grid-container-small">
               <div className="grid-item-small">
