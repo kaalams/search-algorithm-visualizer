@@ -43,22 +43,20 @@ export default function GraphWidget() {
   }));
 
   useEffect(() => {
-    const nodeMap = {};
-    if (editedGraph?.nodes.length > 0) {
-      for (let i = 0; i < editedGraph.nodes.length; i++) {
-        nodeMap[editedGraph.nodes[i].id] = {
-          index: i,
-          label: editedGraph.nodes[i].label,
-        };
-      }
+    if (editedGraph.nodes.length === 0) {
+      return;
     }
-    setNodeIndexMapping(nodeMap);
-  }, [editedGraph.nodes]);
 
-  useEffect(() => {
-    if (editedGraph.nodes.length > 0) {
-      setGraph(editedGraph);
+    const nodeIndexmap = {};
+    for (let i = 0; i < editedGraph.nodes.length; i++) {
+      nodeIndexmap[editedGraph.nodes[i].id] = {
+        index: i,
+        label: editedGraph.nodes[i].label,
+      };
     }
+
+    setGraph(editedGraph);
+    setNodeIndexMapping(nodeIndexmap);
   }, [editedGraph]);
 
   const onChangeAddedNode = (value) => {
@@ -137,15 +135,28 @@ export default function GraphWidget() {
     }
   };
 
-  const dfs = () => {
-    const newGraphObject = { ...graph };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  const dfs = async () => {
     const explored = new Set();
-    let qq = [];
-    qq.push(startNode);
+    let qq = [startNode];
 
     while (qq.length !== 0) {
+      const newGraphObject = { ...graph };
       const node_id = qq.shift();
       explored.add(node_id);
+
+      const newNodes = graph.nodes.map((nd) =>
+        explored.has(nd.id)
+          ? {
+              ...nd,
+              color: "orange",
+            }
+          : nd,
+      );
+
+      newGraphObject.nodes = newNodes;
+      setEditedGraph(newGraphObject);
 
       // Break if found
       if (node_id === endNode) {
@@ -158,20 +169,9 @@ export default function GraphWidget() {
       );
 
       qq = [...qq, ...neighbors];
-    }
 
-    const newNodes = graph.nodes.map((nd) =>
-      explored.has(nd.id)
-        ? {
-            id: nd.id,
-            label: nd.label,
-            title: nd.title,
-            color: "orange",
-          }
-        : nd,
-    );
-    newGraphObject.nodes = newNodes;
-    setEditedGraph(newGraphObject);
+      await sleep(500);
+    }
   };
 
   // TODO: implement (breadth first search)
