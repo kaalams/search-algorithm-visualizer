@@ -19,7 +19,7 @@ export default function GraphWidget() {
     console.log("Failed:", errorInfo);
   };
 
-  const [algorithm, setAlgorithm] = useState("dfs");
+  const [algorithm, setAlgorithm] = useState("");
   const [network, setNetwork] = useState({});
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
@@ -192,7 +192,7 @@ export default function GraphWidget() {
         ucs();
         break;
       default:
-        console.error("Invalid algorithm ");
+        console.error("Invalid algorithm.");
         break;
     }
   };
@@ -282,7 +282,7 @@ export default function GraphWidget() {
           autoComplete="off"
         >
           <Form.Item label="Algorithm" name="algorithm">
-            <Radio.Group onChange={setAlgorithm} value={algorithm}>
+            <Radio.Group onChange={(e) => setAlgorithm(e.target.value)} value={algorithm}>
               <Radio.Button value="dfs">DFS</Radio.Button>
               <Radio.Button value="bfs">BFS</Radio.Button>
               <Radio.Button value="ucs">UCS</Radio.Button>
