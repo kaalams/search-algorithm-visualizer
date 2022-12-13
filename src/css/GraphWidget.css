@@ -1,0 +1,31 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: center;
+  margin: auto;
+}
+
+.grid-item {
+  background-color: #f7f5f5;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  max-width: 2000px;
+  text-align: center;
+}
+
+.grid-container-small {
+  display: grid;
+  grid-template-columns: auto auto auto;
+
+  justify-content: center;
+  max-width: 500px;
+  margin: auto;
+}
+
+.grid-item-small {
+  background-color: #f7f5f5;
+  border: none;
+  padding-right: 10px;
+  text-align: center;
+}
