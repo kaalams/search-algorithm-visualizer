@@ -1,8 +1,9 @@
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, RestFilled } from "@ant-design/icons";
 import { Button, Dropdown, Form, Input, Radio, Space } from "antd";
 import { useEffect, useState } from "react";
 import Graph from "react-graph-vis";
 import uuid from "react-uuid";
+import _ from "lodash";
 
 import {
   defaultDirectedGraph,
@@ -11,6 +12,7 @@ import {
 } from "../constants/DefaultDirectedGraphSettings";
 import "../css/GraphWidget.css";
 import { bfs, dfs, ucs } from "../utils/SearchAlgorithms";
+import { usePrevious } from "../utils/hooks";
 
 export default function GraphWidget() {
   const onFinish = (values) => {
@@ -33,6 +35,7 @@ export default function GraphWidget() {
   const [editedGraph, setEditedGraph] = useState(defaultDirectedGraph);
   const [nodeIndexMapping, setNodeIndexMapping] = useState({});
   const [graph, setGraph] = useState(defaultDirectedGraph);
+  const previousGraph = usePrevious(graph)
 
   // Change these to state variables if needed
   const options = defaultOptions;
@@ -42,6 +45,13 @@ export default function GraphWidget() {
     label: g.label,
     key: g.id.toString(),
   }));
+
+  useEffect(()=> {
+    if(!(_.isEqual(previousGraph?.nodes.length, graph?.nodes.length)) ||
+    !(_.isEqual(previousGraph?.edges.length, graph?.edges.length))) {
+      resetColor();
+    }
+  }, [previousGraph, graph])
 
   useEffect(() => {
     if (editedGraph.nodes.length === 0) {
@@ -135,6 +145,21 @@ export default function GraphWidget() {
       setNodeToDelete("");
     }
   };
+
+  const resetColor = () => {
+    const newGraphObject = {...graph}
+    const currentNodes = newGraphObject.nodes
+    const newNodes = currentNodes.map((currentNode) => {
+      return {
+        ...currentNode,
+        color: "#97c2fc"
+      }
+    })
+
+    newGraphObject.nodes = newNodes;
+    setEditedGraph(newGraphObject);
+  }
+
 
   const runSearch = () => {
     switch (algorithm) {
