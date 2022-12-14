@@ -1,4 +1,4 @@
-import { DownOutlined, RestFilled } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Form, Input, Radio, Space } from "antd";
 import { useEffect, useState } from "react";
 import Graph from "react-graph-vis";
@@ -23,7 +23,6 @@ export default function GraphWidget() {
   };
 
   const [algorithm, setAlgorithm] = useState("");
-  const [network, setNetwork] = useState({});
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
   const [toNode, setToNode] = useState("");
@@ -252,7 +251,6 @@ export default function GraphWidget() {
         <Graph
           graph={graph}
           options={{ ...options, height: "100%", width: "1000px" }}
-          getNetwork={(network) => setNetwork({ network })}
           events={events}
         />
       </div>
