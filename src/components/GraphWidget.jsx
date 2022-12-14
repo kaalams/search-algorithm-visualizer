@@ -251,7 +251,7 @@ export default function GraphWidget() {
                 <Dropdown menu={searchFromProps}>
                   <Button>
                     <Space>
-                      {startNode !== "" ? nodeIndexMapping[startNode]?.label : "From"}
+                      {startNode !== "" ? nodeIndexMapping[startNode].label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -261,7 +261,7 @@ export default function GraphWidget() {
                 <Dropdown menu={searchToProps}>
                   <Button>
                     <Space>
-                      {endNode !== "" ? nodeIndexMapping[endNode]?.label : "To"}
+                      {endNode !== "" ? nodeIndexMapping[endNode].label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -323,7 +323,7 @@ export default function GraphWidget() {
                 <Dropdown menu={deleteNodeProps}>
                   <Button>
                     <Space>
-                      {nodeToDelete !== "" ? nodeIndexMapping[nodeToDelete]?.label : "Node"}
+                      {nodeToDelete !== "" ? nodeIndexMapping[nodeToDelete].label : "Node"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -341,7 +341,7 @@ export default function GraphWidget() {
                 <Dropdown menu={deleteNodeFromProps}>
                   <Button>
                     <Space>
-                      {nodeToDeleteFrom !== "" ? nodeIndexMapping[nodeToDeleteFrom]?.label : "From"}
+                      {nodeToDeleteFrom !== "" ? nodeIndexMapping[nodeToDeleteFrom].label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -351,7 +351,7 @@ export default function GraphWidget() {
                 <Dropdown menu={deleteNodeToProps}>
                   <Button>
                     <Space>
-                      {nodeToDeleteTo !== "" ? nodeIndexMapping[nodeToDeleteTo]?.label : "To"}
+                      {nodeToDeleteTo !== "" ? nodeIndexMapping[nodeToDeleteTo].label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
