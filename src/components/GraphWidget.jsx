@@ -1,18 +1,21 @@
 import { DownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Form, Input, Radio, Space } from "antd";
+import { Button, Dropdown, Form, Input, Radio, Space, InputNumber } from "antd";
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import Graph from "react-graph-vis";
 import uuid from "react-uuid";
 import _ from "lodash";
 
 import {
-  defaultDirectedGraph,
+  defaultUnweightedDirectedGraph,
+  defaultWeightedDirectedGraph,
   defaultEvents,
   defaultOptions,
 } from "../constants/DefaultDirectedGraphSettings";
 import "../css/GraphWidget.css";
 import { bfs, dfs, ucs } from "../utils/SearchAlgorithms";
 import { usePrevious } from "../utils/hooks";
+import { _statistic_build_ } from "antd/es/theme/util/statistic";
 
 export default function GraphWidget() {
   const onFinish = (values) => {
@@ -22,6 +25,7 @@ export default function GraphWidget() {
     console.log("Failed:", errorInfo);
   };
 
+  const location = useLocation();
   const [algorithm, setAlgorithm] = useState("");
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
@@ -31,19 +35,19 @@ export default function GraphWidget() {
   const [nodeToDeleteTo, setNodeToDeleteTo] = useState("");
   const [startNode, setNodeToStartFrom] = useState("");
   const [endNode, setNodeToEndTo] = useState("");
-  const [editedGraph, setEditedGraph] = useState(defaultDirectedGraph);
+  const isDefaultWeighted = location?.state?.isGraphWeighted
+  const [editedGraph, setEditedGraph] = useState(isDefaultWeighted ? defaultWeightedDirectedGraph : defaultUnweightedDirectedGraph);
   const [nodeIndexMapping, setNodeIndexMapping] = useState({});
-  const [graph, setGraph] = useState(defaultDirectedGraph);
+  const [graph, setGraph] = useState(isDefaultWeighted ? defaultWeightedDirectedGraph : defaultUnweightedDirectedGraph);
+  const [nodes, setNodes] = useState([])
+  const [fromNodeToChangeWeight, setFromNodeToChangeWeight] = useState("")
+  const [toNodeToChangeWeight, setToNodeToChangeWeight] = useState("")
+  const [newEdgeWeight, setNewEdgeWeight] = useState();
   const previousGraph = usePrevious(graph)
 
   // Change these to state variables if needed
   const options = defaultOptions;
   const events = defaultEvents;
-
-  const nodes = graph.nodes.map((g) => ({
-    label: g.label,
-    key: g.id.toString(),
-  }));
 
   useEffect(() => {
     if (!(_.isEqual(previousGraph?.nodes.length, graph?.nodes.length)) ||
@@ -67,6 +71,15 @@ export default function GraphWidget() {
 
     setGraph(editedGraph);
     setNodeIndexMapping(nodeIndexmap);
+
+    if (graph.nodes.length > 0) {
+      const nodes = graph.nodes.map((g) => ({
+        label: g.label,
+        key: g.id.toString(),
+      }))
+      setNodes(nodes)
+    }
+
   }, [editedGraph]);
 
   const onChangeAddedNode = (value) => {
@@ -103,9 +116,10 @@ export default function GraphWidget() {
     if (nodeToDeleteFrom.length > 0 && nodeToDeleteTo.length > 0) {
       const newGraphObject = { ...graph };
       const currentEdges = [...newGraphObject.edges];
+      console.log(currentEdges)
       const newEdges = [];
       for (let i = 0; i < currentEdges.length; i++) {
-        if (currentEdges[i].from !== nodeToDeleteFrom && currentEdges[i].to !== nodeToDeleteTo) {
+        if (!(currentEdges[i].from === nodeToDeleteFrom && currentEdges[i].to === nodeToDeleteTo)) {
           newEdges.push(currentEdges[i]);
         }
       }
@@ -159,6 +173,29 @@ export default function GraphWidget() {
     setEditedGraph(newGraphObject);
   }
 
+  const changeEdgeWeight = () => {
+    if(fromNodeToChangeWeight.length > 0 && toNodeToChangeWeight.length > 0 && newEdgeWeight >= 0) {
+      const newGraphObject = { ...graph }
+      const currentEdges = newGraphObject.edges;
+      const newEdges = [];
+      for(let i = 0; i < currentEdges.length; i++) {
+        if (currentEdges[i].from === fromNodeToChangeWeight && currentEdges[i].to === toNodeToChangeWeight) {
+          const newEdge = {from: currentEdges[i].from, to: currentEdges[i].to, label: newEdgeWeight.toString()}
+          newEdges.push(newEdge);
+        } else {
+          newEdges.push(currentEdges[i]);
+        }
+      }
+      newGraphObject.edges = newEdges
+      setEditedGraph(newGraphObject)
+      setFromNodeToChangeWeight("")
+      setToNodeToChangeWeight("")
+    }
+  }
+
+  const onChangeAddedWeight = (value) => {
+    setNewEdgeWeight(value)
+  }
 
   const runSearch = () => {
     switch (algorithm) {
@@ -197,6 +234,22 @@ export default function GraphWidget() {
   };
   const handleToClick = (e) => {
     setNodeToEndTo(e.key);
+  };
+  const handleChangeNodeFromWeight = (e) => {
+    setFromNodeToChangeWeight(e.key)
+  };
+  const handleChangeNodeToWeight = (e) => {
+    setToNodeToChangeWeight(e.key)
+  };
+
+  const changeNodeFromWeightMenuProps = {
+    items: nodes,
+    onClick: handleChangeNodeFromWeight,
+  };
+
+  const changeNodeToWeightMenuProps = {
+    items: nodes,
+    onClick: handleChangeNodeToWeight,
   };
 
   const nodeFromMenuProps = {
@@ -242,7 +295,11 @@ export default function GraphWidget() {
   };
 
   const resetGraph = () => {
-    setEditedGraph(defaultDirectedGraph);
+    if (isDefaultWeighted) {
+      setEditedGraph(defaultWeightedDirectedGraph);
+    } else {
+      setEditedGraph(defaultUnweightedDirectedGraph);
+    }
   }
 
   return (
@@ -345,6 +402,43 @@ export default function GraphWidget() {
             </div>
           </Form.Item>
 
+          {isDefaultWeighted ? <Form.Item label="Change Edge Weight" name="changeEdgeWeight">
+            <div className="grid-container-small">
+              <div className="grid-item-small">
+                <Dropdown menu={changeNodeFromWeightMenuProps}>
+                  <Button>
+                    <Space>
+                      {fromNodeToChangeWeight !== "" ? nodeIndexMapping[fromNodeToChangeWeight].label : "From"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+                <Dropdown menu={changeNodeToWeightMenuProps}>
+                  <Button>
+                    <Space>
+                      {toNodeToChangeWeight !== "" ? nodeIndexMapping[toNodeToChangeWeight].label : "To"}
+                      <DownOutlined />
+                    </Space>
+                  </Button>
+                </Dropdown>
+              </div>
+              <div className="grid-item-small">
+              <InputNumber
+                  defaultValue={1}
+                  value={newEdgeWeight}
+                  onChange={onChangeAddedWeight}
+                  placeholder="Edge weight"
+                  style = {{width: 50}}
+                />
+              </div>
+              <div className="grid-item-small">
+                <Button onClick={changeEdgeWeight}>Ok!</Button>
+              </div>
+            </div>
+          </Form.Item> : null}
+
           <Form.Item label="Delete node" name="nodeName">
             <div className="grid-container-small">
               <div className="grid-item-small">
@@ -391,7 +485,7 @@ export default function GraphWidget() {
             </div>
           </Form.Item>
           <Form.Item {...tailLayout}>
-            <Button onClick = {resetGraph} type="primary" htmlType="submit">
+            <Button onClick={resetGraph} type="primary" htmlType="submit">
               Reset Graph
             </Button>
           </Form.Item>
