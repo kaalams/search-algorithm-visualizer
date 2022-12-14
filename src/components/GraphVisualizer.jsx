@@ -42,7 +42,7 @@ export default function GraphVisualizer() {
         autoComplete="off"
       >
         <div style={{ textAlign: "center", paddingBottom: 20 }}>
-          <h1>Fill in the form below</h1>
+          <h1>Graph Settings</h1>
         </div>
 
         <Form.Item
@@ -60,10 +60,11 @@ export default function GraphVisualizer() {
         >
           <Switch onChange={onChangeWeighted} />
         </Form.Item>
+
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Link to="/graph" state={{ isGraphWeighted: isWeighted, isGraphDirected: isDirected }}>
             <Button type="primary" htmlType="submit">
-              Submit
+              Generate graph!
             </Button>
           </Link>
         </Form.Item>

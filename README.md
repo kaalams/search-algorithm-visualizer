@@ -1,12 +1,12 @@
 # Search Algorithm Visualizer
 
-This project aims to visualize a handful of search algorithms
+This project aims to visualize a handful of search algorithms.
 
 ## Implemented Algorithms
 
 - [x] Depth First Search
-- [ ] Breadth First Search
-- [ ] Uniform-Cost Search
+- [x] Breadth First Search
+- [x] Uniform-Cost Search
 
 ## Running locally
 

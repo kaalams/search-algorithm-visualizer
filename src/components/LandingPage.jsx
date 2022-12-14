@@ -14,10 +14,10 @@ export default function LandingPage() {
         backgroundColor: "transparent",
       }}
     >
-      <h1 style={{ fontSize: 65 }}>Welcome to the Search Algorithm Visualizer Tool</h1>
+      <h1>Welcome to the Search Algorithm Visualizer Tool</h1>
       <Link to="/visualizer">
         <Button type="primary" size="large">
-          Let's Get Started
+          Get Started!
         </Button>
       </Link>
     </div>
