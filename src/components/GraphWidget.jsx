@@ -46,9 +46,9 @@ export default function GraphWidget() {
     key: g.id.toString(),
   }));
 
-  useEffect(()=> {
-    if(!(_.isEqual(previousGraph?.nodes.length, graph?.nodes.length)) ||
-    !(_.isEqual(previousGraph?.edges.length, graph?.edges.length))) {
+  useEffect(() => {
+    if (!(_.isEqual(previousGraph?.nodes.length, graph?.nodes.length)) ||
+      !(_.isEqual(previousGraph?.edges.length, graph?.edges.length))) {
       resetColor();
     }
   }, [previousGraph, graph])
@@ -147,7 +147,7 @@ export default function GraphWidget() {
   };
 
   const resetColor = () => {
-    const newGraphObject = {...graph}
+    const newGraphObject = { ...graph }
     const currentNodes = newGraphObject.nodes
     const newNodes = currentNodes.map((currentNode) => {
       return {
@@ -235,11 +235,16 @@ export default function GraphWidget() {
     onClick: handleToClick,
   };
 
-  const changeNodeColor = (nodeId, color) => {
-    if (Object.keys(network.network).length > 0) {
-      network.network.body.nodes[nodeId].options.color.background = color;
-    }
+  const tailLayout = {
+    wrapperCol: {
+      offset: 9,
+      span: 16,
+    },
   };
+
+  const resetGraph = () => {
+    setEditedGraph(defaultDirectedGraph);
+  }
 
   return (
     <div className="grid-container" style={{ paddingTop: 100 }}>
@@ -386,6 +391,11 @@ export default function GraphWidget() {
                 <Button onClick={deleteEdge}>Ok!</Button>
               </div>
             </div>
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button onClick = {resetGraph} type="primary" htmlType="submit">
+              Reset Graph
+            </Button>
           </Form.Item>
         </Form>
       </div>
