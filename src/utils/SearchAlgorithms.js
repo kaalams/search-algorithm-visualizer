@@ -129,14 +129,13 @@ export const ucs = async (start, goal, graph, setEditedGraph) => {
   frontier.push(make_path(start, 0, null));
 
   while (frontier.length > 0) {
-    frontier.forEach((element) => console.log("frontier:" + element.state));
+    //frontier.forEach((element) => console.log("frontier:" + element.state));
     // remove the minumum cost and explore from it
     const path = remove_choice(frontier);
-    console.log(write_path(path));
 
     explored.add(path.state);
 
-    explored.forEach((element) => console.log("explored:" + element));
+    //explored.forEach((element) => console.log("explored:" + element));
     // draw
     const newGraphObject = { ...graph };
 
@@ -152,23 +151,34 @@ export const ucs = async (start, goal, graph, setEditedGraph) => {
     setEditedGraph(newGraphObject);
 
     if (path.state === goal) {
-      console.log("goal");
       break;
     }
 
     const neighbors = graph.edges.flatMap((edge) =>
-      edge.from === path.state && !explored[edge.to] ? [edge.to] : [],
+        edge.from === path.state && !explored[edge.to] ? [edge.to] : [],
     );
 
-    neighbors.forEach((element) => {
-      console.log("neib:" + element);
+      neighbors.forEach((element) => {
+
+          let cost = 1;
+          for (let i = 0; i < graph.edges.length; i++) {
+              if (graph.edges[i].from == path.state && graph.edges[i].to == element) {
+                  cost = graph.edges[i].label;
+              }
+          }
+
+      console.log(cost);
       let total_cost = path.cost;
 
-      if (element.cost != null) {
-        total_cost = path.cost + element.cost;
-      } else {
-        total_cost = path.cost + 1;
-      }
+          if (cost != null) {
+              total_cost = Number(path.cost) + Number(cost);
+          } else {
+              total_cost = path.cost + 1;
+          }
+
+          //total_cost = total_cost + cost;
+
+          console.log("path cost: " + path.cost)
 
       frontier.push(make_path(element, total_cost, path));
     });
