@@ -276,13 +276,6 @@ export default function GraphWidget() {
     onClick: handleToClick,
   };
 
-  const tailLayout = {
-    wrapperCol: {
-      offset: 9,
-      span: 16,
-    },
-  };
-
   const resetGraph = () => {
     // Reset state variables
     setSearchStartNode("");
@@ -300,6 +293,20 @@ export default function GraphWidget() {
     } else {
       setEditedGraph(defaultUnweightedDirectedGraph);
     }
+  };
+
+  const resetColors = () => {
+    const newGraphObject = { ...graph };
+    const currentNodes = newGraphObject.nodes;
+    const newNodes = currentNodes.map((currentNode) => {
+      return {
+        ...currentNode,
+        color: "#97c2fc",
+      };
+    });
+
+    newGraphObject.nodes = newNodes;
+    setEditedGraph(newGraphObject);
   };
 
   return (
@@ -490,10 +497,19 @@ export default function GraphWidget() {
               </div>
             </div>
           </Form.Item>
-          <Form.Item {...tailLayout}>
-            <Button onClick={resetGraph} type="primary" htmlType="submit">
-              Reset Graph
-            </Button>
+          <Form.Item>
+            <div className="grid-container-small">
+              <div className="grid-item-small">
+                <Button onClick={resetGraph} type="primary" htmlType="submit">
+                  Reset Graph
+                </Button>
+              </div>
+              <div className="grid-item-small">
+                <Button onClick={resetColors} type="primary" htmlType="submit">
+                  Reset Colors
+                </Button>
+              </div>
+            </div>
           </Form.Item>
         </Form>
       </div>
