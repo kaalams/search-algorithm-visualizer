@@ -87,16 +87,6 @@ const make_path = (state, cost, parent) => {
   };
 };
 
-const write_path = (path) => {
-  let s = "";
-
-  if (path.parent) {
-    s = write_path(path.parent) + " => ";
-  }
-
-  return s + path.state + "(" + path.cost + ")";
-};
-
 // Find the index of the element in array `a` for which f(el) returns the smallest value.
 const find_min = (a, f) => {
   let min = null;
@@ -129,8 +119,6 @@ export const ucs = async (start, goal, graph, setEditedGraph) => {
 
   frontier.push(make_path(start, 0, null));
 
-  let final_path = [];
-
   while (frontier.length > 0) {
     // remove the minumum cost and explore from it
     const path = remove_choice(frontier);
@@ -162,7 +150,7 @@ export const ucs = async (start, goal, graph, setEditedGraph) => {
     neighbors.forEach((element) => {
       let cost = 1;
       for (let i = 0; i < graph.edges.length; i++) {
-        if (graph.edges[i].from == path.state && graph.edges[i].to == element) {
+        if (graph.edges[i].from === path.state && graph.edges[i].to === element) {
           cost = graph.edges[i].label;
         }
       }
@@ -183,8 +171,6 @@ export const ucs = async (start, goal, graph, setEditedGraph) => {
 
     // Wait half a second before the next step
     await sleep(500);
-
-    final_path = path;
   }
 
   /*
