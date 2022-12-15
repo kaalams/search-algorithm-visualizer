@@ -7,7 +7,8 @@ export const bfs = async (startNode, endNode, graph, setEditedGraph) => {
 
   while (qq.length !== 0) {
     const newGraphObject = { ...graph };
-    const node_id = qq.shift();
+      const node_id = qq.shift();
+
     explored.add(node_id);
 
     const newNodes = graph.nodes.map((nd) =>
@@ -34,15 +35,22 @@ export const bfs = async (startNode, endNode, graph, setEditedGraph) => {
 
     qq = [...qq, ...neighbors];
 
+
+
     // Wait half a second before the next step
     await sleep(500);
-  }
+    }
+
+
+
+
 };
 
 // Depth-first search
 export const dfs = async (startNode, endNode, graph, setEditedGraph) => {
   const explored = new Set();
   let frontier_queue = [startNode];
+
 
   while (frontier_queue.length !== 0) {
     const newGraphObject = { ...graph };
@@ -73,9 +81,13 @@ export const dfs = async (startNode, endNode, graph, setEditedGraph) => {
 
     frontier_queue = [...neighbors, ...frontier_queue];
 
+
     // Wait half a second before the next step
     await sleep(500);
-  }
+    }
+
+
+
 };
 
 const make_path = (state, cost, parent) => {
@@ -123,67 +135,92 @@ const remove_choice = (frontier) => {
 
 // Uniform-cost search. Reference: https://gist.github.com/mishoo/1286920
 export const ucs = async (start, goal, graph, setEditedGraph) => {
-  let frontier = [];
-  let explored = new Set();
+    let frontier = [];
+    let explored = new Set();
 
-  frontier.push(make_path(start, 0, null));
+    frontier.push(make_path(start, 0, null));
 
-  while (frontier.length > 0) {
-    //frontier.forEach((element) => console.log("frontier:" + element.state));
-    // remove the minumum cost and explore from it
-    const path = remove_choice(frontier);
+    let final_path = [];
 
-    explored.add(path.state);
+    while (frontier.length > 0) {
+        //frontier.forEach((element) => console.log("frontier:" + element.state));
+        // remove the minumum cost and explore from it
+        const path = remove_choice(frontier);
 
-    //explored.forEach((element) => console.log("explored:" + element));
-    // draw
-    const newGraphObject = { ...graph };
+        explored.add(path.state);
 
-    const newNodes = graph.nodes.map((nd) =>
-      explored.has(nd.id)
-        ? {
-            ...nd,
-            color: "orange",
-          }
-        : nd,
-    );
-    newGraphObject.nodes = newNodes;
-    setEditedGraph(newGraphObject);
+        //explored.forEach((element) => console.log("explored:" + element));
+        // draw
+        const newGraphObject = { ...graph };
 
-    if (path.state === goal) {
-      break;
+        const newNodes = graph.nodes.map((nd) =>
+            explored.has(nd.id)
+                ? {
+                    ...nd,
+                    color: "orange",
+                }
+                : nd,
+        );
+        newGraphObject.nodes = newNodes;
+        setEditedGraph(newGraphObject);
+
+        if (path.state === goal) {
+            break;
+        }
+
+        const neighbors = graph.edges.flatMap((edge) =>
+            edge.from === path.state && !explored[edge.to] ? [edge.to] : [],
+        );
+
+        neighbors.forEach((element) => {
+
+            let cost = 1;
+            for (let i = 0; i < graph.edges.length; i++) {
+                if (graph.edges[i].from == path.state && graph.edges[i].to == element) {
+                    cost = graph.edges[i].label;
+                }
+            }
+
+            console.log(cost);
+            let total_cost = path.cost;
+
+            if (cost != null) {
+                total_cost = Number(path.cost) + Number(cost);
+            } else {
+                total_cost = path.cost + 1;
+            }
+
+            console.log("path cost: " + path.cost)
+
+            frontier.push(make_path(element, total_cost, path));
+        });
+
+        // Wait half a second before the next step
+        await sleep(500);
+
+        final_path = path;
     }
 
-    const neighbors = graph.edges.flatMap((edge) =>
-        edge.from === path.state && !explored[edge.to] ? [edge.to] : [],
-    );
 
-      neighbors.forEach((element) => {
+    // changes colour of found path to green
+    //let path_nodes = new Set();
+    //let currentNode = final_path;
+    //path_nodes.add(final_path.state);
+    //while (currentNode.parent != null) {
+    //    path_nodes.add(currentNode.parent.state);
+    //    currentNode = currentNode.parent;
+    //}
+    //path_nodes.add(goal);
+    //const newGraphObject = { ...graph };
+    //const newNodes = graph.nodes.map((nd) =>
+    //    path_nodes.has(nd.id)
+    //        ? {
+    //            ...nd,
+    //            color: "green",
+    //        }
+    //        : nd,
+    //);
+    //newGraphObject.nodes = newNodes;
+    //setEditedGraph(newGraphObject);
 
-          let cost = 1;
-          for (let i = 0; i < graph.edges.length; i++) {
-              if (graph.edges[i].from == path.state && graph.edges[i].to == element) {
-                  cost = graph.edges[i].label;
-              }
-          }
-
-      console.log(cost);
-      let total_cost = path.cost;
-
-          if (cost != null) {
-              total_cost = Number(path.cost) + Number(cost);
-          } else {
-              total_cost = path.cost + 1;
-          }
-
-          //total_cost = total_cost + cost;
-
-          console.log("path cost: " + path.cost)
-
-      frontier.push(make_path(element, total_cost, path));
-    });
-
-    // Wait half a second before the next step
-    await sleep(500);
-  }
 };
