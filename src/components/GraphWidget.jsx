@@ -1,6 +1,5 @@
 import { DownOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Form, Input, InputNumber, Radio, Space } from "antd";
-import _ from "lodash";
 import { useEffect, useState } from "react";
 import Graph from "react-graph-vis";
 import { useLocation } from "react-router-dom";
@@ -14,7 +13,6 @@ import {
 } from "../constants/DefaultDirectedGraphSettings";
 import "../css/GraphWidget.css";
 import { bfs, dfs, ucs } from "../utils/SearchAlgorithms";
-import { usePrevious } from "../utils/hooks";
 
 export default function GraphWidget() {
   const onFinish = (values) => {
@@ -25,6 +23,8 @@ export default function GraphWidget() {
   };
 
   const location = useLocation();
+  const isDefaultWeighted = location?.state?.isGraphWeighted;
+
   const [algorithm, setAlgorithm] = useState("");
   const [nodeToAdd, setNodeToAdd] = useState("");
   const [fromNode, setFromNode] = useState("");
@@ -32,9 +32,8 @@ export default function GraphWidget() {
   const [nodeToDelete, setNodeToDelete] = useState("");
   const [nodeToDeleteFrom, setNodeToDeleteFrom] = useState("");
   const [nodeToDeleteTo, setNodeToDeleteTo] = useState("");
-  const [startNode, setNodeToStartFrom] = useState("");
-  const [endNode, setNodeToEndTo] = useState("");
-  const isDefaultWeighted = location?.state?.isGraphWeighted;
+  const [searchStartNode, setSearchStartNode] = useState("");
+  const [searchEndNode, setSearchEndNode] = useState("");
   const [editedGraph, setEditedGraph] = useState(
     isDefaultWeighted ? defaultWeightedDirectedGraph : defaultUnweightedDirectedGraph,
   );
@@ -46,58 +45,34 @@ export default function GraphWidget() {
   const [fromNodeToChangeWeight, setFromNodeToChangeWeight] = useState("");
   const [toNodeToChangeWeight, setToNodeToChangeWeight] = useState("");
   const [newEdgeWeight, setNewEdgeWeight] = useState();
-  const previousGraph = usePrevious(graph);
 
   // Change these to state variables if needed
   const options = defaultOptions;
   const events = defaultEvents;
 
   useEffect(() => {
-    const resetColor = () => {
-      const newGraphObject = { ...graph };
-      const currentNodes = newGraphObject.nodes;
-      const newNodes = currentNodes.map((currentNode) => {
-        return {
-          ...currentNode,
-          color: "#97c2fc",
-        };
-      });
-
-      newGraphObject.nodes = newNodes;
-      setEditedGraph(newGraphObject);
-    };
-    if (
-      !_.isEqual(previousGraph?.nodes.length, graph?.nodes.length) ||
-      !_.isEqual(previousGraph?.edges.length, graph?.edges.length)
-    ) {
-      resetColor();
-    }
-  }, [previousGraph, graph]);
-
-  useEffect(() => {
     if (editedGraph.nodes.length === 0) {
       return;
     }
 
-    const nodeIndexmap = {};
+    const nodeIndexMap = {};
+
     for (let i = 0; i < editedGraph.nodes.length; i++) {
-      nodeIndexmap[editedGraph.nodes[i].id] = {
+      nodeIndexMap[editedGraph.nodes[i].id] = {
         index: i,
         label: editedGraph.nodes[i].label,
       };
     }
 
-    setGraph(editedGraph);
-    setNodeIndexMapping(nodeIndexmap);
+    const nodes = editedGraph.nodes.map((g) => ({
+      label: g.label,
+      key: g.id.toString(),
+    }));
 
-    if (graph.nodes.length > 0) {
-      const nodes = graph.nodes.map((g) => ({
-        label: g.label,
-        key: g.id.toString(),
-      }));
-      setNodes(nodes);
-    }
-  }, [graph.nodes, editedGraph]);
+    setGraph(editedGraph);
+    setNodeIndexMapping(nodeIndexMap);
+    setNodes(nodes);
+  }, [editedGraph]);
 
   const onChangeAddedNode = (value) => {
     setNodeToAdd(value);
@@ -214,13 +189,13 @@ export default function GraphWidget() {
   const runSearch = () => {
     switch (algorithm) {
       case "dfs":
-        dfs(startNode, endNode, graph, setEditedGraph);
+        dfs(searchStartNode, searchEndNode, graph, setEditedGraph);
         break;
       case "bfs":
-        bfs(startNode, endNode, graph, setEditedGraph);
+        bfs(searchStartNode, searchEndNode, graph, setEditedGraph);
         break;
       case "ucs":
-        ucs(startNode, endNode, graph, setEditedGraph);
+        ucs(searchStartNode, searchEndNode, graph, setEditedGraph);
         break;
       default:
         console.error("Invalid algorithm.");
@@ -244,10 +219,10 @@ export default function GraphWidget() {
     setNodeToDeleteTo(e.key);
   };
   const handleFromClick = (e) => {
-    setNodeToStartFrom(e.key);
+    setSearchStartNode(e.key);
   };
   const handleToClick = (e) => {
-    setNodeToEndTo(e.key);
+    setSearchEndNode(e.key);
   };
   const handleChangeNodeFromWeight = (e) => {
     setFromNodeToChangeWeight(e.key);
@@ -309,6 +284,17 @@ export default function GraphWidget() {
   };
 
   const resetGraph = () => {
+    // Reset state variables
+    setSearchStartNode("");
+    setSearchEndNode("");
+    setFromNode("");
+    setToNode("");
+    setNodeToDelete("");
+    setNodeToDeleteFrom("");
+    setNodeToDeleteTo("");
+    setFromNodeToChangeWeight("");
+    setToNodeToChangeWeight("");
+
     if (isDefaultWeighted) {
       setEditedGraph(defaultWeightedDirectedGraph);
     } else {
@@ -350,7 +336,7 @@ export default function GraphWidget() {
                 <Dropdown menu={searchFromProps}>
                   <Button>
                     <Space>
-                      {startNode !== "" ? nodeIndexMapping[startNode].label : "From"}
+                      {searchStartNode !== "" ? nodeIndexMapping[searchStartNode].label : "From"}
                       <DownOutlined />
                     </Space>
                   </Button>
@@ -360,7 +346,7 @@ export default function GraphWidget() {
                 <Dropdown menu={searchToProps}>
                   <Button>
                     <Space>
-                      {endNode !== "" ? nodeIndexMapping[endNode].label : "To"}
+                      {searchEndNode !== "" ? nodeIndexMapping[searchEndNode].label : "To"}
                       <DownOutlined />
                     </Space>
                   </Button>
