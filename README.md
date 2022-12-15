@@ -28,3 +28,9 @@ npm start
 - 'Delete node': Select node to delete, press 'Ok!' to remove from graph
 - 'Delete edge': Select start and end of desired edge, press 'Ok!' to remove from graph
 - 'Reset Graph': Press to reset graph to original states
+
+## Demo: 
+
+https://user-images.githubusercontent.com/25531883/207761113-65072958-8cfc-42e2-af1d-ac01018cd4fa.mp4
+
+
