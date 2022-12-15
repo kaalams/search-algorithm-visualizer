@@ -4,9 +4,9 @@ This project aims to visualize a handful of search algorithms.
 
 ## Implemented Algorithms
 
-- [x] Depth First Search
-- [x] Breadth First Search
-- [x] Uniform-Cost Search
+- [x] Depth-first Search
+- [x] Breadth-first Search
+- [x] Uniform-cost Search
 
 ## Running locally
 
@@ -17,7 +17,7 @@ npm install
 npm start
 ```
 
-## How to use:
+## How to use
 
 - 'Algorithm': Select desired search algorithm
 - 'From/To': Select the start and desination node
@@ -27,9 +27,10 @@ npm start
 - 'Change Edge Weight': Select start and end of edge, and enter desired weight of edge, press 'Ok!' to add to graph
 - 'Delete node': Select node to delete, press 'Ok!' to remove from graph
 - 'Delete edge': Select start and end of desired edge, press 'Ok!' to remove from graph
-- 'Reset Graph': Press to reset graph to original states
+- 'Reset Graph': Reset graph to original default graph
+- 'Reset Colors': Reset the graph colors while retaining added nodes and edges
 
-## Demo: 
+## Demo
 
 https://user-images.githubusercontent.com/25531883/207761113-65072958-8cfc-42e2-af1d-ac01018cd4fa.mp4
 
